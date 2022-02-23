@@ -25,15 +25,19 @@ class AudioFocusService : Service() {
             @Nullable contentType: Int,
             @Nullable acceptsDelayedFocusGain: Boolean
         ): Int {
-            return audioFocusManager?.requestAudioFocus(
+            val result = audioFocusManager?.requestAudioFocus(
                 listener, focusGain, usage, contentType, acceptsDelayedFocusGain)
                 ?: AudioManager.AUDIOFOCUS_REQUEST_FAILED
+            Log.d(TAG, "AudioFocusService ---- requestAudioFocusRequest, result = $result")
+            return result
         }
 
         @RequiresApi(Build.VERSION_CODES.O)
         override fun abandonAudioFocusRequest(): Int {
-            return audioFocusManager?.abandonAudioFocusRequest()
+            val result = audioFocusManager?.abandonAudioFocusRequest()
                 ?: AudioManager.AUDIOFOCUS_REQUEST_FAILED
+            Log.d(TAG, "AudioFocusService ---- abandonAudioFocusRequest, result = $result")
+            return result
         }
 
         override fun requestAudioFocus(
@@ -41,18 +45,28 @@ class AudioFocusService : Service() {
             @Nullable streamType: Int,
             @Nullable durationHint: Int
         ): Int {
-            return audioFocusManager?.requestAudioFocus(listener, streamType, durationHint)
+            val result = audioFocusManager?.requestAudioFocus(listener, streamType, durationHint)
                 ?: AudioManager.AUDIOFOCUS_REQUEST_FAILED
+            Log.d(TAG, "AudioFocusService ---- requestAudioFocus, result = $result")
+            return result
         }
 
         override fun abandonAudioFocus(): Int {
-            return audioFocusManager?.abandonAudioFocus()
+            val result = audioFocusManager?.abandonAudioFocus()
                 ?: AudioManager.AUDIOFOCUS_REQUEST_FAILED
+            Log.d(TAG, "AudioFocusService ---- abandonAudioFocus, result = $result")
+            return result
         }
     }
 
     override fun onBind(p0: Intent?): IBinder {
+        Log.d(TAG, "AudioFocusService ---- onBind")
         return binder
+    }
+
+    override fun onUnbind(intent: Intent?): Boolean {
+        Log.d(TAG, "AudioFocusService ---- onBind")
+        return super.onUnbind(intent)
     }
 
     override fun onCreate() {

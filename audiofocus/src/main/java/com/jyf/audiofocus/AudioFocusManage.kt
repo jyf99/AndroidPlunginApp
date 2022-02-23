@@ -5,6 +5,7 @@ import android.media.AudioAttributes
 import android.media.AudioFocusRequest
 import android.media.AudioManager
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
 
 internal class AudioFocusManage(context: Context) {
@@ -13,6 +14,7 @@ internal class AudioFocusManage(context: Context) {
     private var focusRemoteChangeListener: AudioFocusRemoteChangeListener? = null
     private var focusChangeListener: AudioManager.OnAudioFocusChangeListener =
         AudioManager.OnAudioFocusChangeListener {
+            Log.d(TAG, "AudioFocusManage --- OnAudioFocusChangeListener, type = $it")
             focusRemoteChangeListener?.onAudioFocusChange(it)
         }
 
