@@ -10,9 +10,13 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.IBinder
 import android.util.Log
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.lifecycle.lifecycleScope
 import com.jyf.androidplunginapp.databinding.ActivityMainBinding
 import com.jyf.audiofocus.AudioFocusRemoteChangeListener
 import com.jyf.audiofocus.AudioFocusRemoteService
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 const val TAG = "AudioFocusTest"
 
@@ -35,7 +39,6 @@ class MainActivity : AppCompatActivity() {
 
         override fun onServiceDisconnected(name: ComponentName?) {
             Log.d(TAG, "disconnected. $audioService")
-            audioService?.abandonAudioFocusRequest()
         }
 
     }
@@ -44,11 +47,6 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
-        bindService(Intent().apply {
-            action = AudioFocusRemoteService::class.java.name
-            component = ComponentName("com.jyf.audiofocus", "com.jyf.audiofocus.AudioFocusService")
-        }, connection, Context.BIND_AUTO_CREATE)
 
         binding.button.setOnClickListener {
             audioService?.requestAudioFocusRequest(
@@ -62,6 +60,30 @@ class MainActivity : AppCompatActivity() {
 
         binding.button2.setOnClickListener {
             audioService?.abandonAudioFocusRequest()
+        }
+
+        bindAudioFocusService()
+    }
+
+    private fun bindAudioFocusService() {
+        val isBind = {
+            bindService(Intent().apply {
+                action = AudioFocusRemoteService::class.java.name
+                component = ComponentName("com.jyf.audiofocus", "com.jyf.audiofocus.AudioFocusService")
+            }, connection, BIND_AUTO_CREATE)
+        }
+        if (!isBind()) {
+            val launcher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+                lifecycleScope.launch {
+                    while (!isBind()) {
+                        delay(500)
+                    }
+                }
+            }
+            launcher.launch(Intent().apply {
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                component = ComponentName("com.jyf.audiofocus", "com.jyf.audiofocus.MainActivity")
+            })
         }
     }
 

@@ -65,7 +65,8 @@ class AudioFocusService : Service() {
     }
 
     override fun onUnbind(intent: Intent?): Boolean {
-        Log.d(TAG, "AudioFocusService ---- onBind")
+        Log.d(TAG, "AudioFocusService ---- onUnbind")
+        stopSelf()
         return super.onUnbind(intent)
     }
 
