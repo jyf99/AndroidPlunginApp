@@ -36,7 +36,7 @@ android {
     applicationVariants.all { variant ->
         variant.outputs.forEach { output ->
             if (output.outputFileName.endsWith(".apk")) {
-                output.outputFileName = new File("audfocus.apk")
+                output.outputFileName = new File("audiofocus.apk")
             }
         }
     }
